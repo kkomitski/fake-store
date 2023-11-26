@@ -21,6 +21,8 @@ const Add = () => {
                 <strong className="underline">definitely not fake</strong> and
                 all the information queried from{" "}
                 <a
+                  target="_blank"
+                  rel="noreferrer noopener"
                   href="https://fakestoreapi.com/"
                   className="text-purple-400 underline"
                 >
@@ -29,7 +31,7 @@ const Add = () => {
                 is <strong className="underline">completely real.</strong>
               </p>
               <button
-                className="btn-primary btn mt-10"
+                className="btn btn-primary mt-10"
                 onClick={(_) => setNewItemOpen(!isNewItemOverlayOpen)}
               >
                 Add a new fake item

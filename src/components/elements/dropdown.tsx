@@ -27,8 +27,7 @@ type DropdownProps = {
  * @param options Array of strings to be displayed as options
  * @param reset Boolean to reset the dropdown to the initial title (reset if true)
  * @param className String to add custom classes to the dropdown
- * @param callback Function to set URLSearchParams on the parent component
- * @param addDataToForm Function to add data to the parent component's state. Used for form validation. 
+ * @param onChange Function to be called when an option is selected
  * 
  * @example
  *  <Dropdown
