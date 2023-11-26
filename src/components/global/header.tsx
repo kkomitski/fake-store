@@ -39,10 +39,10 @@ const Header = () => {
             ]}
           />
           <div className="navbar-center">
-            <a className="btn-ghost btn text-xl normal-case">Fake Store</a>
+            <a className="btn btn-ghost text-xl normal-case">Fake Store</a>
           </div>
 
-          <label className="navbar-end pr-3">
+          <label className="navbar-end cursor-pointer pr-3">
             <input
               type="checkbox"
               className="hidden"
