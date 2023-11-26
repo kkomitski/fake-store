@@ -7,6 +7,7 @@ import Dropdown from "@/components/elements/dropdown";
 
 type FilterState = Record<string, string> | null;
 
+// Trigger
 type FiltersProps = {
   setItems: Dispatch<React.SetStateAction<Product[] | undefined>>;
   items?: Product[];

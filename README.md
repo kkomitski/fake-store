@@ -56,7 +56,7 @@ Deployment
 2. Prune all unused Docker containers and images
 3. Pull latest version of image from DockerHub
 4. Delete old version of container
-5. Spin up fresh container from the updated image
+5. Spin up fresh container from the updated imag
 
 <br/>
 
