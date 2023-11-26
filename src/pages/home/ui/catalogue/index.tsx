@@ -11,8 +11,6 @@ const Catalogue = ({ itemList }: { itemList: Product[] | undefined }) => {
   // const [noMoreItemsAvailable, setNoMoreItemsAvailable] =
   //   useState<boolean>(false);
 
-  // Trigger
-
   const [isItemEditOverlayOpen, setItemEditOpen] = useState<boolean>(false);
   const [editItem, setEditIitem] = useState<Product | undefined>();
 
