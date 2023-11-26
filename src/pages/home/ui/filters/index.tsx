@@ -1,11 +1,9 @@
-import { Dispatch, useEffect, useState } from "react";
+import { Dispatch, useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import fetchProducts from "@/utils/api/fetch-products";
 import { clientFilterSorter } from "./utils";
 import { Product } from "@/utils/api/schemas/product-schema";
-import Dropdown from "@/components/elements/dropdown";
-
-type FilterState = Record<string, string> | null;
+import Dropdown, { DropdownOnChangeFn } from "@/components/elements/dropdown";
 
 type FiltersProps = {
   setItems: Dispatch<React.SetStateAction<Product[] | undefined>>;
@@ -20,116 +18,56 @@ type FiltersProps = {
  */
 
 const Filters = ({ setItems, items }: FiltersProps) => {
-  const [initialLoad, setInitalLoad] = useState(true);
-
-  const [serverFilters, setServerFilters] = useState<FilterState>(null);
-  const [clientFilters, setClientFilters] = useState<FilterState>(null);
-
   const [clearAllFilters, setClearAllFilters] = useState(false);
-  const [preventFetch, setPreventFetch] = useState(true);
-
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Save URLSearchParams (ie - the url field) into serverFilters state
+  const category = searchParams.get("category") as string | undefined;
+  const limit = searchParams.get("limit") as string | undefined;
+  const sort = searchParams.get("sort") as string | undefined;
+
+  const handleChange = useCallback<DropdownOnChangeFn>((data) => {
+    const key = data.id;
+    const val = data.selected;
+
+    searchParams.set(key, val as string);
+    setSearchParams(searchParams);
+  }, []);
+
+  // Server Filters
   useEffect(() => {
-    // @ts-ignore
-    if (searchParams.size) {
-      setItems([])
-
-      // If search params available - regenerate the catalogue state
-      for (const param of searchParams) {
-        const paramKey = param[0];
-        const paramVal = param[1];
-
-        // Server filters
-        if (paramKey !== "sort") {
-          setServerFilters((prev) => ({
-            ...prev,
-            [paramKey]: paramVal,
-          }));
-        }
-
-        // Run the fetch for server filters
-        setPreventFetch(false);
-
-        // Client filters
-        if (paramKey === "sort") {
-          initialLoad ? setInitalLoad(false) : setPreventFetch(true);
-          // setPreventFetch(true);
-          setClientFilters((prev) => ({
-            ...prev,
-            [paramKey]: paramVal,
-          }));
-        }
-      }
-    } else {
-      // Else fetch normally
-      setPreventFetch(false);
-    }
-  }, [searchParams]);
-
-  /**
-   * SERVER FILTER
-   * Refetch with the new params every time the filter state updates
-   */
-  useEffect(() => {
-    if (!preventFetch) {
-      // Initial load
-      const category = serverFilters?.category;
-      const limit = serverFilters?.limit;
-
+    if (!clearAllFilters) {
       fetchProducts({ category, limit }).then((data) => {
-        setItems(data);
+        const sorted = data && sort && clientFilterSorter(data, sort);
+        if (sorted) {
+          setItems(sorted);
+        } else {
+          setItems(data);
+        }
       });
     }
-  }, [preventFetch, serverFilters, setItems]);
-
-  /**
-   * CLIENT FILTER
-   * Only sorts the already existing items state based on the
-   * required condition
-   */
-  useEffect(() => {
-    if (clientFilters) {
-      const sorted = items && clientFilterSorter(items, clientFilters.sort);
-      if (sorted) setItems(sorted);
-    }
-  }, [clientFilters, setItems]);
+  }, [searchParams, clearAllFilters]);
 
   // Reset all filters
   useEffect(() => {
     if (clearAllFilters) {
-      const params = [];
+      searchParams.delete("category");
+      searchParams.delete("limit");
+      searchParams.delete("sort");
 
-      // Push all params to array
-      for (const param of searchParams) {
-        params.push(param[0]);
-      }
+      setSearchParams(searchParams);
 
-      // Remove all params
-      params.forEach((param) => {
-        const currentParam = searchParams.get(param);
-        if (currentParam) searchParams.delete(param);
-        setSearchParams(searchParams);
-      });
+      setItems(items);
 
-      // Reset clear filters state
       setClearAllFilters(false);
-
-      // Reset all filters
-      setServerFilters(null);
-      setClientFilters(null);
-
-      // Allow a new fetch to repopulate the catalogue
-      setPreventFetch(false);
     }
-  }, [clearAllFilters, setSearchParams]);
+  }, [clearAllFilters, setSearchParams, items]);
 
   return (
     <section className="fs-padding flex w-full flex-col justify-end gap-10 lg:flex-row">
       <Dropdown
         id="category"
         title={"Category"}
+        initial={category ? category : null}
         options={[
           "electronics",
           "jewelery",
@@ -137,18 +75,20 @@ const Filters = ({ setItems, items }: FiltersProps) => {
           "women's clothing",
         ]}
         reset={clearAllFilters}
-        callback={setSearchParams}
+        onChange={handleChange}
       />
       <Dropdown
         id="limit"
         title={"Limit"}
+        initial={limit ? limit : null}
         options={["1", "2", "3", "5"]}
         reset={clearAllFilters}
-        callback={setSearchParams}
+        onChange={handleChange}
       />
       <Dropdown
         id="sort"
         title={"Sort"}
+        initial={sort ? sort : null}
         options={[
           "ID - descending",
           "ID - ascending",
@@ -158,11 +98,10 @@ const Filters = ({ setItems, items }: FiltersProps) => {
           "rating - high to low",
         ]}
         reset={clearAllFilters}
-        callback={setSearchParams}
+        onChange={handleChange}
       />
-
       <button
-        className="btn-primary btn"
+        className="btn btn-primary"
         onClick={(_) => setClearAllFilters(true)}
       >
         Reset Filters
