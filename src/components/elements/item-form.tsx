@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import { ZodError } from "zod";
-import Dropdown from "./dropdown";
+import Dropdown, { DropdownOnChangeFn } from "./dropdown";
 import addNewProduct from "@/utils/api/add-new-product";
 import { Product, ProductSchema } from "@/utils/api/schemas/product-schema";
 import patchProduct from "@/utils/api/edit-product";
@@ -71,14 +71,21 @@ const ItemForm = ({
   // const [isCaptchaVisible, setCaptchaVisibility] = useState<boolean>(false);
   const [returnedItemID, setReturnedItemID] = useState<{ id: string }>();
 
-  const addDataToForm = (id: string, value: string | number) => {
+  const addDataToForm: DropdownOnChangeFn = (data) => {
+    const field = data.id;
+    const value = data.selected;
+
+    console.log(field, value);
     setError("");
     setSubmitting(false);
     setFormData((prevData) => ({
       ...prevData,
-      [id]: value,
+      [field]: value,
     }));
   };
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
 
   const validateFormData = () => {
     // Disable button
@@ -187,7 +194,10 @@ const ItemForm = ({
                 placeholder="Product Title"
                 id="title"
                 onChange={(e) =>
-                  addDataToForm(e.currentTarget.id, e.currentTarget.value)
+                  addDataToForm({
+                    id: e.currentTarget.id,
+                    selected: e.target.value,
+                  })
                 }
                 value={formData?.title}
               />
@@ -195,8 +205,8 @@ const ItemForm = ({
                 id="category"
                 title={type === "edit" && item ? item.category : "Category"}
                 options={CATEGORIES}
-                addDataToForm={addDataToForm}
                 reset={clearAllFields}
+                onChange={addDataToForm}
                 className="lg:col-span-1 lg:col-start-2"
               />
 
@@ -208,10 +218,10 @@ const ItemForm = ({
                 name="price"
                 required
                 onChange={(e) =>
-                  addDataToForm(
-                    e.currentTarget.id,
-                    parseFloat(e.currentTarget.value),
-                  )
+                  addDataToForm({
+                    id: e.currentTarget.id,
+                    selected: parseFloat(e.currentTarget.value),
+                  })
                 }
                 value={!formData.price ? "" : formData?.price?.toString()}
               />
@@ -229,7 +239,10 @@ const ItemForm = ({
                   name="image"
                   id="image"
                   onChange={(e) =>
-                    addDataToForm(e.currentTarget.id, e.currentTarget.value)
+                    addDataToForm({
+                      id: e.currentTarget.id,
+                      selected: e.currentTarget.value,
+                    })
                   }
                 />
               </label>
@@ -239,7 +252,10 @@ const ItemForm = ({
                 placeholder="Description"
                 id="description"
                 onChange={(e) =>
-                  addDataToForm(e.currentTarget.id, e.currentTarget.value)
+                  addDataToForm({
+                    id: e.currentTarget.id,
+                    selected: e.currentTarget.value,
+                  })
                 }
                 value={formData?.description}
               />
@@ -294,19 +310,26 @@ const ItemForm = ({
 
         {/* Confirmation */}
         <div
-          className={`glass-10 absolute top-0 h-full w-full flex-col items-center justify-center pt-10 ${
+          className={`glass-10 absolute top-0 h-full w-full flex-col items-center justify-center  pt-10 ${
             isThankYouVisible ? "flex" : "hidden"
           }`}
         >
-          <p className="text-h3 pb-6">
-            {error
-              ? error
-              : `Item #${returnedItemID?.id} successfully added to catalogue.`}
-          </p>
+          <div className="flex flex-col items-center justify-center rounded-lg border border-solid border-purple-600 bg-white px-12 py-5 ">
+            <div className="pb-6 text-lg">
+              {error ? (
+                error
+              ) : (
+                <p className="flex flex-col items-center gap-2">
+                  <span className=" font-semibold">{`Successfully added to catalogue!`}</span>
+                  <span className="underline">{`Item ID: #${returnedItemID?.id}`}</span>
+                </p>
+              )}
+            </div>
 
-          <button className="btn" onClick={resetAll}>
-            Close form
-          </button>
+            <button className="btn btn-primary" onClick={resetAll}>
+              Close form
+            </button>
+          </div>
         </div>
       </div>
     </div>

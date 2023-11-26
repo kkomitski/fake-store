@@ -1,14 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
-import { SetURLSearchParams } from "react-router-dom";
+
+export type DropdownOnChangeFn = ({
+  id,
+  selected,
+}: {
+  id: string;
+  selected: string | number;
+}) => void;
 
 type DropdownProps = {
   id: string;
   title: string;
-  reset: boolean;
+  initial?: string | null;
+  reset?: boolean;
   className?: string;
   options: string[];
-  callback?: SetURLSearchParams;
-  addDataToForm?: (id: string, value: string) => void;
+  onChange: DropdownOnChangeFn;
 };
 
 /**
@@ -38,30 +45,23 @@ type DropdownProps = {
 const Dropdown = ({
   id,
   title,
+  initial,
   options,
   reset,
   className,
-  callback,
-  addDataToForm,
+  onChange,
 }: DropdownProps) => {
-  const [selected, setSelected] = useState(title);
+  const [selected, setSelected] = useState(initial ? initial : title);
   const detailsRef = useRef<HTMLDetailsElement>(null);
 
   const handleClick = (e: React.MouseEvent) => {
     setSelected(e.currentTarget.id);
     detailsRef.current?.removeAttribute("open");
-
-    addDataToForm && addDataToForm(id, selected);
   };
 
   useEffect(() => {
-    if (selected !== title && callback) {
-      callback((prev) => {
-        prev.set(id, selected);
-        return prev;
-      });
-    }
-  }, [callback, id, selected, title]);
+    if (selected !== title) onChange({ id, selected });
+  }, [selected]);
 
   useEffect(() => {
     if (reset) {
@@ -94,16 +94,16 @@ const Dropdown = ({
           />
         </svg>
       </summary>
-      <ul className="dropdown-content menu z-[1] mt-1 w-full min-w-min rounded-lg border border-solid border-purple-600 bg-purple-100 p-2 text-black shadow ">
+      <ul className="menu dropdown-content z-[1] mt-1 min-w-full whitespace-nowrap rounded-lg border border-solid border-purple-600 bg-purple-100 p-2 text-black shadow ">
         {options.map((opt, index) => {
           return (
             <li
               id={opt}
               key={index}
-              className="capitalize"
+              className="min-w-min capitalize"
               onClick={handleClick}
             >
-              <a>{opt}</a>
+              <a className=" whitespace-nowrap">{opt}</a>
             </li>
           );
         })}
