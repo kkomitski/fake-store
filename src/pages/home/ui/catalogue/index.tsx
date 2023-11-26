@@ -18,9 +18,7 @@ const Catalogue = ({ itemList }: { itemList: Product[] | undefined }) => {
     <>
       <section className="fs-padding">
         <div className="my-auto grid grid-cols-1 gap-10 lg:grid-cols-2 xl:grid-cols-3">
-          {/* PART OF PAGINATION  */}
-          {/* {console.log(itemList)} */}
-          {itemList && itemList[0] ?
+          {itemList && itemList[0] ? (
             itemList.map((itemData, index) => {
               return (
                 <Item
@@ -30,7 +28,11 @@ const Catalogue = ({ itemList }: { itemList: Product[] | undefined }) => {
                   key={index}
                 />
               );
-            }) : <p>Loading products....</p>}
+            })
+          ) : (
+            <p>Loading products....</p>
+          )}
+          {/* PART OF PAGINATION  */}
           {/* {itemList &&
             itemList.slice(0, shownItems).map((itemData, index) => {
               return (

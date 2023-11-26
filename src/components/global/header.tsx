@@ -34,8 +34,11 @@ const Header = () => {
           <Menu
             links={[
               { name: "Homepage", href: "/" },
-              { name: "LinkedIn", href: "/portfolio" },
-              { name: "GitHub", href: "/about" },
+              {
+                name: "LinkedIn",
+                href: "https://www.linkedin.com/in/kiril-komitski-143056b1/",
+              },
+              { name: "GitHub", href: "https://github.com/kkomitski" },
             ]}
           />
           <div className="navbar-center">

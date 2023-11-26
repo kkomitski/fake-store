@@ -75,7 +75,6 @@ const ItemForm = ({
     const field = data.id;
     const value = data.selected;
 
-    console.log(field, value);
     setError("");
     setSubmitting(false);
     setFormData((prevData) => ({
@@ -83,9 +82,6 @@ const ItemForm = ({
       [field]: value,
     }));
   };
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
 
   const validateFormData = () => {
     // Disable button
