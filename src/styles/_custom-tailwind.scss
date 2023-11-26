@@ -1,0 +1,16 @@
+@layer utilities {
+  .glass-10 {
+    background: rgba(5, 5, 27, 0.05);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+
+
+  .grid-center-parent {
+    @apply grid grid-cols-1 grid-rows-1;
+
+    > * {
+      @apply col-span-1 col-start-1 row-span-1 row-start-1;
+    }
+  }
+}

@@ -1,0 +1,50 @@
+@layer utilities {
+  .fs-padding {
+    @apply px-4 py-5;
+  }
+
+  @screen lg {
+    .fs-padding {
+      @apply px-10 py-8;
+    }
+  }
+
+  @screen 3xl {
+    .fs-padding {
+      @apply px-24 py-8;
+    }
+  }
+
+  .fs-padding-x {
+    @apply px-4;
+  }
+
+  @screen lg {
+    .fs-padding-x {
+      @apply px-10;
+    }
+  }
+
+  @screen 3xl {
+    .fs-padding-x {
+      @apply px-24;
+    }
+  }
+
+  .fs-padding-y {
+    @apply py-5;
+  }
+
+  @screen lg {
+    .fs-padding-y {
+      @apply py-8;
+    }
+  }
+
+  @screen 3xl {
+    .fs-padding-y {
+      @apply py-8;
+    }
+  }
+
+}

@@ -1,0 +1,23 @@
+name: CD pipeline
+
+on:
+  workflow_run:
+    workflows: [ "CI pipeline" ]
+    types:
+      - completed
+
+jobs:
+
+  build:
+
+    runs-on: self-hosted
+
+    steps:
+    - name: Prune all unused images
+      run: sudo docker system prune --all
+    - name: Pull Docker image
+      run: sudo docker pull ephulian/fake-store:latest
+    - name: Delete old Docker container
+      run: sudo docker rm -f fake-store-container || true
+    - name: Run new Docker container
+      run: sudo docker run -d -p 80:80 --name fake-store-container ephulian/fake-store

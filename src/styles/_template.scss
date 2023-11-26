@@ -1,0 +1,24 @@
+html {
+
+  
+  #root {
+  
+    main {
+      @apply relative pt-[75px];
+      
+        section {
+          @apply max-w-[1680px] mx-auto;
+        }
+  
+        input, textarea {
+          @apply bg-transparent focus:border-black text-black placeholder:text-gray-900 rounded-lg border border-solid border-purple-600;
+        }
+  
+    }
+  
+    @media (prefers-color-scheme: light) {
+  
+    }
+  
+  }
+}
